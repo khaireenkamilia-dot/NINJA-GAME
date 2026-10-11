@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Air Slice Ninja Academy</title>
+<style>
+:root{--navy:#101b4c;--cyan:#42f5f5;--pink:#ff65b8;--gold:#ffe45c;--green:#5cff9d;--red:#ff506a}
+*{box-sizing:border-box}body{margin:0;color:#fff;font-family:system-ui,Segoe UI,sans-serif;background:radial-gradient(circle at top,#273b91,#08132e 75%);min-height:100vh}
+button{font:inherit;cursor:pointer}.app{max-width:1200px;margin:auto;padding:14px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.brand{display:flex;gap:10px;align-items:center}.logo{font-size:38px}h1{font-size:clamp(1.2rem,3vw,2rem);margin:0;line-height:1.1}.sub{margin:4px 0 0;color:#bdeeff;font-size:.9rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}.stat{background:#ffffff17;border:1px solid #ffffff30;border-radius:14px;padding:8px 13px;backdrop-filter:blur(8px)}.stat small{display:block;color:#c7e7ff;font-size:.72rem;font-weight:800;letter-spacing:1px}.stat strong{font-size:1.25rem}
+.game{position:relative;min-height:610px;border:2px solid #7c8dff;border-radius:24px;overflow:hidden;isolation:isolate;background:#101a47;box-shadow:0 20px 50px #0005}
+#webcam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);z-index:0;background:#071022}
+.tint{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,#081638b5,#11194a75 55%,#06102bbd)}
+.gridbg{position:absolute;inset:0;z-index:1;opacity:.22;background-image:linear-gradient(#b8faff38 1px,transparent 1px),linear-gradient(90deg,#b8faff38 1px,transparent 1px);background-size:34px 34px}
+#slash{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}#confetti{position:absolute;inset:0;width:100%;height:100%;z-index:7;pointer-events:none}
+.gamebar{position:relative;z-index:2;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:14px 16px;font-size:.82rem;font-weight:900;text-shadow:0 2px 6px #000}
+.center{position:relative;z-index:2;max-width:900px;margin:10px auto 0;padding:0 16px 24px}
+.question{background:#fffef3;color:#172044;border-radius:18px;padding:15px 20px;border:3px solid #fff;box-shadow:0 7px 0 #42f5f5;text-align:center}
+.qtag{font-size:.7rem;letter-spacing:2px;color:#6d45cb;font-weight:1000}.qtext{font-size:clamp(1.05rem,2.4vw,1.65rem);font-weight:950;line-height:1.35;margin-top:6px}
+.options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:20px}
+.option{min-height:190px;border:3px solid #ffffffd9;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#15204b;font-weight:950;box-shadow:0 9px 0 #0004;transition:transform .12s,filter .12s;user-select:none;padding:12px;background:linear-gradient(145deg,#ffe777ed,#ffb84bed)}
+.option:nth-child(2){background:linear-gradient(145deg,#72ffe0ed,#38d8e9ed)}.option:nth-child(3){background:linear-gradient(145deg,#ffa7d4ed,#c2a5ffed)}
+.option .emoji{font-size:clamp(2.4rem,5vw,4.5rem);filter:drop-shadow(0 3px 2px #0002);line-height:1}.option .letter{font-size:.8rem;background:#19234d;color:white;border-radius:50%;width:28px;height:28px;display:grid;place-items:center}.option .word{font-size:clamp(1rem,2vw,1.35rem)}.option.hit{transform:scale(.94) rotate(-3deg);outline:5px solid var(--green);filter:brightness(1.15)}.option.wrong{animation:shake .3s}@keyframes shake{25%,75%{transform:translateX(-8px)}50%{transform:translateX(8px)}}
+.feedback{position:absolute;z-index:8;top:51%;left:50%;transform:translate(-50%,-50%) scale(.85);opacity:0;pointer-events:none;text-align:center;padding:17px 20px;border-radius:20px;font-size:clamp(1rem,3vw,2rem);font-weight:1000;max-width:90%;width:max-content;box-shadow:0 10px 40px #0009;transition:.18s}.feedback.show{opacity:1;transform:translate(-50%,-50%) scale(1)}.good{background:#baffd8;color:#075331;border:4px solid #49ffa0}.bad{background:#ffe0e7;color:#9b1530;border:4px solid #ff506a}
+.overlay{position:absolute;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#06112be8;text-align:center}.overlay.hidden{display:none}.overlay-card{max-width:510px}.big{font-size:4rem}.overlay h2{font-size:clamp(1.6rem,4vw,2.4rem);margin:4px 0 8px}.overlay p{line-height:1.55;color:#d3e7ff}.btn{padding:11px 16px;border-radius:13px;border:0;font-weight:950}.primary{background:linear-gradient(135deg,#ffe45c,#ff9d48);color:#172044;box-shadow:0 4px 0 #b86a25}.secondary{background:#ffffff20;color:white;border:1px solid #ffffff55}.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px}.status{font-size:.82rem;color:#d8eeff}
+.bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 4px;color:#c3ddff;font-size:.85rem}.help{max-width:720px;line-height:1.5}
+@media(max-width:650px){.app{padding:9px}.stats{grid-template-columns:repeat(2,1fr)}.game{min-height:700px}.center{padding:0 10px 18px}.options{gap:7px;margin-top:13px}.option{min-height:150px;padding:7px 3px;border-radius:15px}.option .emoji{font-size:2.5rem}.option .word{font-size:.95rem}.question{padding:13px}.gamebar{padding:11px}.bottom{font-size:.78rem}}
+</style>
+</head>
+<body><div class="app">
+<header><div class="brand"><div class="logo">🥷💧</div><div><h1>AIR SLICE NINJA ACADEMY</h1><p class="sub">Misi Kata Ganti Nama Diri · Bahasa Melayu</p></div></div><button id="musicBtn" class="btn secondary">♫ Muzik: ON</button></header>
+<div class="stats">
+<div class="stat"><small>SKOR</small><strong id="score">0</strong></div><div class="stat"><small>NYAWA</small><strong id="lives">♥ ♥ ♥</strong></div><div class="stat"><small>MASA</small><strong><span id="time">90</span>s</strong></div><div class="stat"><small>SOALAN</small><strong><span id="num">1</span>/5</strong></div>
+</div>
+<main class="game" id="game"><video id="webcam" autoplay playsinline muted></video><div class="tint"></div><div class="gridbg"></div><canvas id="slash"></canvas><canvas id="confetti"></canvas>
+<div class="gamebar"><span>⚡ TEbas kad jawapan yang betul!</span><span id="handStatus">☝️ Menunggu tangan…</span></div>
+<div class="center"><section class="question"><div class="qtag">MISI SEMASA</div><div class="qtext" id="question">Tekan MULA BERMAIN untuk bermula.</div></section><section class="options" id="options"></section></div>
+<div id="feedback" class="feedback"></div>
+<div id="overlay" class="overlay"><div class="overlay-card"><div class="big">🌀🥷</div><h2>Jom, Ninja Bahasa!</h2><p>Kamera menjadi <b>latar belakang permainan</b>. Benarkan akses kamera, kemudian gerakkan hujung jari telunjuk melintasi kad jawapan bergambar untuk menebasnya. Anda ada 3 nyawa dan 90 saat.</p><button id="start" class="btn primary">MULA BERMAIN ▶</button><p class="status" id="status">Kamera dan pengesanan tangan akan dimulakan selepas anda menekan butang.</p></div></div>
+</main>
+<div class="bottom"><div class="help">🖐️ <b>Cara main:</b> tunjukkan tangan dalam kamera, gerakkan jari telunjuk dengan pantas merentasi kad. Jawapan salah mengurangkan satu nyawa dan soalan akan kekal. Muzik latar dijana dalam pelayar.</div><div id="progress">Kemajuan: 0/5</div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script>
+(()=>{
+const data=[
+{q:'“Emak, dompet _____ telah hilang,” kata Alex kepada ibunya.',a:[['A','saya','👛'],['B','kami','👨‍👩‍👧'],['C','mereka','👥']],correct:0},
+{q:'Darus dan Intan bersahabat karib. _____ tinggal sekampung.',a:[['A','Dia','🧒'],['B','Kami','🧑‍🤝‍🧑'],['C','Mereka','👫']],correct:2},
+{q:'Dewan sekolah itu telah dirasmikan oleh _____.',a:[['A','dia','🧑'],['B','kamu','👉'],['C','beliau','🎓']],correct:2},
+{q:'“Boleh _____ tumpang bertanya?” kata Suri kepada Murni.',a:[['A','kamu','👉'],['B','awak','🙋'],['C','saya','🗣️']],correct:2},
+{q:'“Kalau _____ izinkan, patik akan melaksanakan tugas itu,” sembah ahli nujum kepada sultan.',a:[['A','tuan','👑'],['B','tuanku','🤴'],['C','baginda','🏰']],correct:2}
+];
+const $=id=>document.getElementById(id),video=$('webcam'),game=$('game'),canvas=$('slash'),ctx=canvas.getContext('2d');
+let hands=null,stream=null,raf=0,loopTimer=null,playing=false,locked=false,score=0,lives=3,index=0,time=90,lastTip=null,lastHit=0,trail=[],audio=null,musicOn=true,musicTimer=null,musicStep=0,smoothedTip=null;
+function resize(){let r=game.getBoundingClientRect(),d=window.devicePixelRatio||1;canvas.width=r.width*d;canvas.height=r.height*d;canvas.style.width=r.width+'px';canvas.style.height=r.height+'px';ctx.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',()=>{resize();resizeConfetti()});
+function stats(){$('score').textContent=score;$('lives').textContent=Array.from({length:3},(_,i)=>i<lives?'♥':'♡').join(' ');$('time').textContent=time;$('num').textContent=Math.min(index+1,5);$('progress').textContent='Kemajuan: '+index+'/5'}
+function render(){if(index>=data.length){finish(true);return} $('question').textContent=data[index].q;$('options').innerHTML='';data[index].a.forEach((a,i)=>{let b=document.createElement('button');b.className='option';b.dataset.i=i;b.innerHTML='<span class="letter">'+a[0]+'</span><span class="emoji">'+a[2]+'</span><span class="word">'+a[1]+'</span>';b.addEventListener('click',()=>answer(i,b));$('options').appendChild(b)});stats()}
+function say(text,good){let f=$('feedback');f.textContent=text;f.className='feedback show '+(good?'good':'bad');clearTimeout(f._t);f._t=setTimeout(()=>f.className='feedback',good?900:1200)}
+function tone(freq,dur=.12,type='sine',gain=.08){if(!audio)return;let o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.001,audio.currentTime);g.gain.exponentialRampToValueAtTime(gain,audio.currentTime+.02);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+dur+.02)}
+function startMusic(){
+ if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();
+ audio.resume();
+ if(musicTimer)clearInterval(musicTimer);
+ // Skor aksi sinematik original: kord minor, brass-like synth, bass dan drum.
+ // Bukan lagu Marvel atau salinan soundtrack berhak cipta.
+ const chords=[
+  [110,130.81,164.81], // A minor
+  [87.31,110,130.81],  // F
+  [98,123.47,146.83],  // G
+  [73.42,110,146.83]   // D minor colour
+ ];
+ const melody=[440,0,523.25,659.25,0,587.33,523.25,0,392,0,440,523.25,0,659.25,587.33,0];
+ function pad(freq,when,duration,volume){
+  const o=audio.createOscillator(),g=audio.createGain(),filter=audio.createBiquadFilter();
+  o.type='sawtooth';o.frequency.setValueAtTime(freq,when);
+  filter.type='lowpass';filter.frequency.setValueAtTime(850,when);
+  g.gain.setValueAtTime(.0001,when);g.gain.linearRampToValueAtTime(volume,when+.18);
+  g.gain.setValueAtTime(volume,when+duration-.22);g.gain.exponentialRampToValueAtTime(.0001,when+duration);
+  o.connect(filter);filter.connect(g);g.connect(audio.destination);o.start(when);o.stop(when+duration+.03);
+ }
+ function boom(when){
+  const o=audio.createOscillator(),g=audio.createGain();
+  o.type='sine';o.frequency.setValueAtTime(105,when);o.frequency.exponentialRampToValueAtTime(42,when+.24);
+  g.gain.setValueAtTime(.0001,when);g.gain.linearRampToValueAtTime(.23,when+.012);g.gain.exponentialRampToValueAtTime(.0001,when+.28);
+  o.connect(g);g.connect(audio.destination);o.start(when);o.stop(when+.3);
+ }
+ musicStep=0;
+ const beatMs=300;
+ musicTimer=setInterval(()=>{
+  if(!musicOn||!playing)return;
+  const step=musicStep%16,now=audio.currentTime+.015,bar=Math.floor(musicStep/16)%chords.length;
+  if(step===0){
+   chords[bar].forEach((f,i)=>pad(f,now,2.8,i===0?.035:.018));
+   pad(chords[bar][0]/2,now,1.1,.065);
+   boom(now);
+  }
+  if(step===8){boom(now);pad(chords[bar][0]/2,now,.65,.05)}
+  if(step%4===0)pad(chords[bar][0]/2,now,.42,.055);
+  if(melody[step])pad(melody[step],now,.23,.026);
+  // pulse ringan seperti trailer aksi, bukan bunyi elektronik rawak
+  if(step%2===1)tone(2100,.018,'triangle',.004);
+  musicStep++;
+ },beatMs);
+}
+
+$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent='♫ Muzik: '+(musicOn?'ON':'OFF');if(musicOn&&playing)startMusic()};
+async function setupCamera(){
+ if(!navigator.mediaDevices?.getUserMedia){$('status').textContent='Pelayar tidak menyokong kamera. Cuba Chrome melalui localhost atau HTTPS.';throw Error('Akses kamera tidak tersedia')}
+ if(!window.Hands)throw Error('MediaPipe tidak dapat dimuatkan. Semak sambungan internet.');
+ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});video.srcObject=stream;await video.play();
+ hands=new Hands({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/hands/'+f});
+ hands.setOptions({maxNumHands:1,modelComplexity:0,minDetectionConfidence:.55,minTrackingConfidence:.5});hands.onResults(results);
+ $('status').textContent='Kamera aktif! Pastikan tangan dan jari telunjuk kelihatan.';
+ async function frame(){if(!stream)return;if(video.readyState>=2){try{await hands.send({image:video})}catch(e){}}raf=requestAnimationFrame(frame)}frame();
+}
+function results(res){
+ if(!res.multiHandLandmarks?.length){lastTip=null;smoothedTip=null;$('handStatus').textContent='☝️ Tunjukkan tangan dalam kamera';return}
+ const lm=res.multiHandLandmarks[0],tip=lm[8],r=game.getBoundingClientRect(),vr=video.getBoundingClientRect();
+ // Licinkan sedikit gerakan untuk mengurangkan jitter landmark MediaPipe.
+ const videoW=video.videoWidth||640,videoH=video.videoHeight||480;
+ const scale=Math.max(vr.width/videoW,vr.height/videoH),shownW=videoW*scale,shownH=videoH*scale;
+ const cropX=(shownW-vr.width)/2,cropY=(shownH-vr.height)/2;
+ const rawX=(1-tip.x)*shownW-cropX+(vr.left-r.left),rawY=tip.y*shownH-cropY+(vr.top-r.top);
+ if(!smoothedTip)smoothedTip={x:rawX,y:rawY};
+ smoothedTip.x=smoothedTip.x*.38+rawX*.62;smoothedTip.y=smoothedTip.y*.38+rawY*.62;
+ const x=smoothedTip.x,y=smoothedTip.y;
+ $('handStatus').textContent='✋ Tangan dikesan · hujung telunjuk aktif';
+ const now=performance.now();
+ if(playing&&!locked){
+  if(lastTip){
+   const dx=x-lastTip.x,dy=y-lastTip.y,dist=Math.hypot(dx,dy);
+   if(dist>3){trail.push({x,y,t:now});if(trail.length>18)trail.shift()}
+   // Segment collision: elak swipe laju melangkaui kad tanpa dikesan.
+   if(dist>12&&now-lastHit>420){
+    const cards=[...document.querySelectorAll('.option')];
+    const hit=cards.find(el=>{
+     const b=el.getBoundingClientRect();
+     const left=b.left-r.left,right=b.right-r.left,top=b.top-r.top,bottom=b.bottom-r.top;
+     const inside=(px,py)=>px>=left&&px<=right&&py>=top&&py<=bottom;
+     if(inside(x,y)||inside(lastTip.x,lastTip.y))return true;
+     // Semak beberapa titik pada laluan jari di antara frame.
+     const steps=Math.min(12,Math.max(2,Math.ceil(dist/10)));
+     for(let k=1;k<steps;k++){const t=k/steps;if(inside(lastTip.x+dx*t,lastTip.y+dy*t))return true}
+     return false;
+    });
+    if(hit){lastHit=now;answer(+hit.dataset.i,hit)}
+   }
+  }
+  lastTip={x,y};
+ }else{lastTip={x,y}}
+}
+function answer(choice,el){if(!playing||locked)return;if(choice===data[index].correct){locked=true;score+=100;el.classList.add('hit');stats();say('TAHNIAH! JAWAPAN TEPAT!',true);celebrate();tone(740,.14);setTimeout(()=>tone(990,.18),100);slashBurst();setTimeout(()=>{if(!playing)return;index++;locked=false;if(index>=data.length)finish(true);else render()},1050)}else{lives--;el.classList.add('wrong');say('SALAH! AYUH CUBA LAGI!..',false);tone(150,.22,'sawtooth');stats();if(lives<=0)setTimeout(()=>finish(false),850)}}
+const confettiCanvas=$('confetti'),cctx=confettiCanvas.getContext('2d');let confettiParticles=[],confettiRaf=0;
+function resizeConfetti(){const r=game.getBoundingClientRect(),d=window.devicePixelRatio||1;confettiCanvas.width=r.width*d;confettiCanvas.height=r.height*d;confettiCanvas.style.width=r.width+'px';confettiCanvas.style.height=r.height+'px';cctx.setTransform(d,0,0,d,0,0)}
+function celebrate(){
+ resizeConfetti();const r=game.getBoundingClientRect();const colors=['#ffe45c','#42f5f5','#ff65b8','#5cff9d','#bba0ff','#ff945c'];
+ for(let i=0;i<150;i++)confettiParticles.push({x:Math.random()*r.width,y:-Math.random()*r.height*.5,vx:(Math.random()-.5)*5,vy:2+Math.random()*5,size:4+Math.random()*7,rot:Math.random()*6.28,vr:(Math.random()-.5)*.2,color:colors[i%colors.length],life:130+Math.random()*50});
+ cancelAnimationFrame(confettiRaf);
+ function frame(){const w=r.width,h=r.height;cctx.clearRect(0,0,w,h);confettiParticles=confettiParticles.filter(p=>p.life-->0&&p.y<h+20);confettiParticles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.035;p.rot+=p.vr;cctx.save();cctx.translate(p.x,p.y);cctx.rotate(p.rot);cctx.fillStyle=p.color;cctx.fillRect(-p.size/2,-p.size/3,p.size,p.size*.65);cctx.restore()});if(confettiParticles.length)confettiRaf=requestAnimationFrame(frame);else cctx.clearRect(0,0,w,h)}
+ frame();
+}
+function applause(){
+ if(!audio)return;
+ // Tepukan sintetik berlapis dengan bunyi sorakan pendek; tiada aset audio luaran.
+ const now=audio.currentTime;
+ for(let i=0;i<26;i++){
+  const start=now+i*.085,o=audio.createOscillator(),g=audio.createGain(),f=audio.createBiquadFilter();
+  o.type='triangle';o.frequency.setValueAtTime(900+Math.random()*1800,start);o.frequency.exponentialRampToValueAtTime(250+Math.random()*300,start+.055);
+  f.type='highpass';f.frequency.value=650;g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(.08,start+.008);g.gain.exponentialRampToValueAtTime(.0001,start+.07);
+  o.connect(f);f.connect(g);g.connect(audio.destination);o.start(start);o.stop(start+.08);
+ }
+ [523.25,659.25,783.99,1046.5].forEach((f,i)=>setTimeout(()=>tone(f,.35,'triangle',.055),i*110));
+}
+function finish(win){playing=false;locked=true;clearInterval(loopTimer);if(musicTimer)clearInterval(musicTimer);if(win){celebrate();applause()}$('overlay').classList.remove('hidden');$('overlay').innerHTML='<div class="overlay-card"><div class="big">'+(win?'🏆🎉👏':'💨🥷')+'</div><h2>'+(win?'TAHNIAH, NINJA!':'JOM CUBA LAGI!')+'</h2><p>'+(win?'Hebat! Semua soalan berjaya dijawab. Anda memang Ninja Bahasa!':'Nyawa atau masa telah habis. Jangan putus asa — tekan butang di bawah dan cuba lagi!')+'</p><p><b>Skor akhir: '+score+'</b></p><button class="btn primary" id="again">MAIN LAGI ↻</button></div>';$('again').onclick=reset}
+function reset(){score=0;lives=3;index=0;time=90;playing=false;locked=false;lastTip=null;trail=[];clearInterval(loopTimer);$('overlay').classList.remove('hidden');$('overlay').innerHTML='<div class="overlay-card"><div class="big">🌀🥷</div><h2>Jom, Ninja Bahasa!</h2><p>Kamera menjadi <b>latar belakang permainan</b>. Benarkan akses kamera, kemudian gerakkan hujung jari telunjuk melintasi kad jawapan bergambar untuk menebasnya. Anda ada 3 nyawa dan 90 saat.</p><button id="start" class="btn primary">MULA BERMAIN ▶</button><p class="status" id="status">Tekan mula untuk menyambung kamera.</p></div>';$('start').onclick=start;render()}
+function slashBurst(){let r=game.getBoundingClientRect();for(let i=0;i<12;i++){let a=i*Math.PI/6;ctx.beginPath();ctx.moveTo(r.width/2+Math.cos(a)*10,r.height/2+Math.sin(a)*10);ctx.lineTo(r.width/2+Math.cos(a)*100,r.height/2+Math.sin(a)*100);ctx.lineWidth=4;ctx.strokeStyle=i%2?'#42f5f5':'#ffe45c';ctx.stroke()}}
+function draw(){let r=game.getBoundingClientRect(),now=performance.now();ctx.clearRect(0,0,r.width,r.height);trail=trail.filter(p=>now-p.t<260);if(trail.length>1)for(let i=1;i<trail.length;i++){let a=trail[i-1],b=trail[i],alpha=1-(now-b.t)/260;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineCap='round';ctx.lineWidth=12*alpha;ctx.strokeStyle='rgba(66,245,245,'+alpha+')';ctx.shadowBlur=18;ctx.shadowColor='#42f5f5';ctx.stroke();ctx.lineWidth=3*alpha;ctx.strokeStyle='rgba(255,255,255,'+alpha+')';ctx.stroke()}ctx.shadowBlur=0;requestAnimationFrame(draw)}
+async function start(){try{$('status').textContent='Memulakan kamera dan pengesanan tangan…';if(!stream)await setupCamera();if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();await audio.resume();$('overlay').classList.add('hidden');score=0;lives=3;index=0;time=90;playing=true;locked=false;render();stats();startMusic();clearInterval(loopTimer);loopTimer=setInterval(()=>{if(!playing)return;time--;stats();if(time<=0)finish(false)},1000)}catch(e){$('status').textContent='Tak dapat mula: '+e.message+'. Benarkan kamera dan pastikan internet aktif; buka fail melalui HTTPS/localhost.'}}
+$('start').onclick=start;resize();render();stats();draw();
+})();
+</script></body></html>
